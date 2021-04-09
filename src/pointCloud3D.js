@@ -287,8 +287,8 @@ export function load3DViewer(canvasElement, update_callback) {
   fileIDs = [];
 
   document.addEventListener("orientationchange", window.onresize = onViewportChanged);
-  window.addEventListener('DOMMouseScroll', mousewheel, false);
-  window.addEventListener('mousewheel', mousewheel, false);
+  // window.addEventListener('DOMMouseScroll', mousewheel, false);
+  canvas.addEventListener('wheel', mousewheel, false);
 
   onViewportChanged();
 
@@ -715,10 +715,8 @@ function fr() { // updates every second
 }
 
 function mousewheel(event) {
-  if(event.target != canvas) return;
   event.preventDefault();
   event.stopPropagation();
-
   var fovMAX = 130;
   var fovMIN = 1;
 

@@ -1870,12 +1870,15 @@ export default {
 }
 #histogram_map { height: 400px;}
 #leaflet_histogram {
+  background: black;
   z-index: 12;
   position: relative;
   width: 100%;
   height: 100%;
 }
 .canvas-container{
+  text-align: center;
+  background: black;
   z-index: 10;
   position: relative;
   height: 100%;
