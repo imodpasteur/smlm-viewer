@@ -119,6 +119,16 @@ const webpackConfig = merge(baseWebpackConfig, {
         from: path.resolve(__dirname, '../static'),
         to: config.build.assetsSubDirectory,
         ignore: ['.*']
+      },
+      {
+        from: path.resolve(__dirname, '../public/CNAME'),
+        to: config.build.assetsRoot,
+        type:'file',
+      },
+      {
+        from: path.resolve(__dirname, '../public/.nojekyll'),
+        to: config.build.assetsRoot,
+        type:'file',
       }
     ])
   ]
