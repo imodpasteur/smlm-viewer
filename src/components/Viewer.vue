@@ -274,8 +274,7 @@
                 md-label="Loading sample..."
                 md-description="Please wait, this may take a while...">
                  <div v-if="running">
-                  <md-progress-bar md-mode="indeterminate" v-show="!(running_progress && running_progress>0)"></md-progress-bar>
-                  <md-progress-bar :md-value="running_progress" v-show="running_progress && running_progress>0"></md-progress-bar>
+                  <md-progress-bar :md-value="running_progress"></md-progress-bar>
                   <p>{{running_status}} {{running_status.length<30? ', please wait...': ''}} </p>
                  </div>
                  <div v-if="loading_shared_url">
@@ -875,8 +874,18 @@ export default {
       try{
         this.loading_shared_url=true
         this.shared_url_mode = true
-        const response = await axios.get(url, {responseType: 'blob'})
-        console.log(response)
+        this.running = true
+        const response = await axios({
+          url,
+          method: 'GET',
+          responseType: 'blob',
+          onDownloadProgress: (progressEvent) => {
+            this.running_status = `Downloading ${progressEvent.loaded}/${progressEvent.total}`;
+            if(progressEvent.total)
+            this.running_progress = progressEvent.loaded/progressEvent.total * 100;
+            this.$forceUpdate();
+          }
+        })
         const file = response.data
         const file_name = file.name || url.split('/').pop()
         this.selected_file_name = file_name
@@ -1869,7 +1878,7 @@ export default {
 .canvas-container{
   z-index: 10;
   position: relative;
-  height: calc(100% - 10px);
+  height: 100%;
   width: 100%;
 }
 .slider-toolbar{
