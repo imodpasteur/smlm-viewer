@@ -1888,7 +1888,7 @@ export default {
 	position: relative;
 	top: 0;
 	left: 0;
-  height: calc(100% - 60px);
+  height: calc(100% - 5px);
 }
 #gui-webgl {
   z-index: 14;

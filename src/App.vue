@@ -124,4 +124,9 @@ html, body
 .md-app.md-fixed .md-app-scroller{
   z-index: 0 !important;
 }
+
+.md-app-scroller {
+    flex: 1;
+    max-height: calc( 100vh - 60px);
+}
 </style>
