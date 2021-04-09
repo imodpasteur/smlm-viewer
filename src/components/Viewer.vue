@@ -873,7 +873,8 @@ export default {
     },
     async loadSample(url){
       try{
-         this.loading_shared_url=true
+        this.loading_shared_url=true
+        this.shared_url_mode = true
         const response = await axios.get(url, {responseType: 'blob'})
         console.log(response)
         const file = response.data
