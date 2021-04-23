@@ -42,7 +42,7 @@
                       <md-tooltip>{{filter_tooltip}}</md-tooltip>
                     </md-field>
                 </div>
-                <div class="md-toolbar-section-end md-xsmall-hide" layout="row" v-show="running && !menuVisible && options && screenWidth>800">
+                <div class="md-toolbar-section-end md-xsmall-hide" layout="row" v-show="running">
                     <p>{{running_status}} {{running_status.length<30? ', please wait, this may take a while.': ''}} </p>
                     <md-progress-bar md-mode="indeterminate" v-show="!(running_progress && running_progress>0)"></md-progress-bar>
                     <md-progress-bar :md-value="running_progress" v-show="running_progress && running_progress>0"></md-progress-bar>
