@@ -201,6 +201,10 @@
                   <md-tooltip v-if="smlm&&smlm.isSMLM">save as .smlm file</md-tooltip>
                   <md-tooltip v-else>save as a compressed zip file</md-tooltip>
                 </md-list-item>
+                <md-list-item class="md-primary menu-button" @click="saveAsCSV">
+                  <md-icon>file_download</md-icon><span class="md-list-item-text">Save as CSV</span>
+                  <md-tooltip>save as csv file</md-tooltip>
+                </md-list-item>
                 <md-list-item class="md-primary menu-button" v-show="export_histogram_png" @click="download_image(export_histogram_png, 'exported_input.png')" >
                   <md-icon>save</md-icon><span class="md-list-item-text">Save image</span>
                   <md-tooltip>download and save current image</md-tooltip>
@@ -701,7 +705,6 @@ export default {
       offset_y: 0,
       // delimiter: ',',
       offset_mode: 'min-max',
-      running_progress: 0,
       selected_channel: 0,
       tags: [],
       metadata: {},
@@ -1010,6 +1013,7 @@ export default {
       if(status.running_progress){
         this.running_progress = status.running_progress
       }
+      this.$forceUpdate()
     },
     fileSelected(e){
       const files = e.target.files
@@ -1286,6 +1290,21 @@ export default {
         this.running_status = e
         // this.running = false
       })
+    },
+    saveAsCSV(){
+      this.running = true
+      this.smlm.saveAs('csv', this.updateStatus).then((file)=>{
+           this.running = false
+           let filename = file.name
+           if(!file.name.endsWith('.csv')){
+             filename = file.name + '.csv'
+           }
+           saveAs(file, filename);
+        }).catch((e)=>{
+          this.api.show(e)
+        }).finally(()=>{
+          this.running = false
+        })
     },
     downloadSmlmFile(){
       // if(this.selected_file_name.endsWith('.smlm')){

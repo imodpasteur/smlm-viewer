@@ -439,6 +439,86 @@ export class smlmFile {
     const name = file_name.split(".")[0]+"."+(mimeString.split('/')[1]||'png')
     return new File([blob], name);
   }
+  saveAs(format, update_callback){
+    let delimiter;
+    if(format === 'csv') delimiter=','
+    else if(format === 'tsv') delimiter='\n'
+    else throw new Error("Unsupported format "+ format)
+    update_callback({running: true, running_progress:0, running_status:"Preparing..."})
+    return new Promise((resolve, reject) => {
+      for(let file_no=0; file_no<this.files.length; file_no++){
+          const file_info = this.files[file_no]
+          if(file_info.type == "table"){
+            // TODO: compare with existing format, if the same format already exist, reuse it.
+            try{
+              const data = this.files[file_no].data
+              const tableDict = data.tableDict
+              const headers = []
+              for(let i=0;i<data.headers.length;i++){
+                headers.push(data.headers[i])
+              }
+              
+              var loadWorker;
+              if (typeof (Worker) !== "undefined") {
+                  loadWorker = new Worker("static/js/AsyncExport.js")
+              } else {
+                  console.log("Web Worker not available")
+                  reject("Web Worker not available")
+                  return
+              }
+              console.log('loading...')
+              update_callback( {running : true,  running_status: 'running '})
+
+              loadWorker.onmessage = (e) => {
+                  var data = e.data
+                  if (data.error){
+                    reject(data.error)
+                    loadWorker.terminate()
+                  }
+                  else if(data.progress){
+                    update_callback({running: true, running_progress: data.progress, running_status:`Converting format...${data.progress.toFixed(1)}%`})
+                  }
+                  else if(data.file){
+                    update_callback({running: false, running_progress:100, running_status:"Export"})
+                    resolve(data.file)
+                    loadWorker.terminate()
+                  }
+              }
+              loadWorker.onerror = () => {
+                console.log('load error')
+                reject('error occured during running.')
+                loadWorker.terminate()
+              }
+              loadWorker.postMessage({headers, tableDict, delimiter, format, filename:this.manifest.name})
+
+                      
+              
+              
+              
+            }
+            catch(e){
+              reject(e)
+            }
+          }
+          else if(file_info.type == 'image'){
+            const data = this.files[file_no].data
+            const dataURI = data.image.src
+            const file = this.dataURItoFile(dataURI, data.file_name)
+            file_info.hash = this.calculate_hash(file_info)
+            // var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+            // file_info.name = data.file_name.split(".")[0]+"."+(mimeString.split('/')[1]||'png')
+            //  var byteString = atob(dataURI.split(',')[1]);
+            //  var ab = new ArrayBuffer(byteString.length);
+            //  var ia = new Uint8Array(ab);
+            //  for (var i = 0; i < byteString.length; i++) {
+            //      ia[i] = byteString.charCodeAt(i);
+            //  }
+            //  var blob = new Blob([ab], {type: mimeString});
+            zip.file(file.name, file)
+          }
+        }
+      })
+  }
   save(update_callback){
   console.log('preparing .smlm file')
   return new Promise((resolve, reject) => {
