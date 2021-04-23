@@ -490,31 +490,11 @@ export class smlmFile {
                 loadWorker.terminate()
               }
               loadWorker.postMessage({headers, tableDict, delimiter, format, filename:this.manifest.name})
-
-                      
-              
-              
-              
+ 
             }
             catch(e){
               reject(e)
             }
-          }
-          else if(file_info.type == 'image'){
-            const data = this.files[file_no].data
-            const dataURI = data.image.src
-            const file = this.dataURItoFile(dataURI, data.file_name)
-            file_info.hash = this.calculate_hash(file_info)
-            // var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
-            // file_info.name = data.file_name.split(".")[0]+"."+(mimeString.split('/')[1]||'png')
-            //  var byteString = atob(dataURI.split(',')[1]);
-            //  var ab = new ArrayBuffer(byteString.length);
-            //  var ia = new Uint8Array(ab);
-            //  for (var i = 0; i < byteString.length; i++) {
-            //      ia[i] = byteString.charCodeAt(i);
-            //  }
-            //  var blob = new Blob([ab], {type: mimeString});
-            zip.file(file.name, file)
           }
         }
       })
