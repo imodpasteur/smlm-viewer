@@ -31,7 +31,7 @@ self.onmessage = function(e) {
       const rows = tableDict[headers[0]].length
       for(let i=0;i<rows;i++){
         for(let header of headers){
-          content = content + tableDict[header][i].toPrecision(3) + delimiter
+          content = content + tableDict[header][i] + delimiter
         }
         content = content.slice(0, content.length-1) + '\n'
         
