@@ -29,12 +29,11 @@ self.onmessage = function(e) {
       content = content.slice(0, content.length-1) + '\n'
       self.postMessage({progress: 0});
       const rows = tableDict[headers[0]].length
+      const columns = headers.length;
       for(let i=0;i<rows;i++){
-        for(let header of headers){
-          content = content + tableDict[header][i] + delimiter
+        for(let j=0;j<columns;j++){
+          content = content + tableDict[headers[j]][i] + (j<columns-1?delimiter:'\n')
         }
-        content = content.slice(0, content.length-1) + '\n'
-        
         if(i%1000 === 0) self.postMessage({progress: i/rows*100});
       }
       const file = new File([content], e.data.filename + '.'+format, {
